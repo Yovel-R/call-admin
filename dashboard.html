@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | TraceCall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+    <div class="mobile-header">
+        <div class="brand">
+            <div class="brand-icon" style="width:24px; height:24px; border-radius:4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6.62 10.79C8.06 13.62 10.38 15.93 13.21 17.38L15.41 15.18C15.68 14.91 16.08 14.82 16.43 14.94C17.55 15.31 18.76 15.51 20 15.51C20.55 15.51 21 15.96 21 16.51V20C21 20.55 20.55 21 20 21C10.61 21 3 13.39 3 4C3 3.45 3.45 3 4 3H7.5C8.05 3 8.5 3.45 8.5 4C8.5 5.25 8.7 6.45 9.07 7.57C9.18 7.92 9.1 8.31 8.82 8.59L6.62 10.79Z" fill="white"/></svg>
+            </div>
+            <span class="brand-name" style="font-size: 1.1rem;">TraceCall</span>
+        </div>
+        <button class="hamburger" id="menuToggle">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+        </button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M6.62 10.79C8.06 13.62 10.38 15.93 13.21 17.38L15.41 15.18C15.68 14.91 16.08 14.82 16.43 14.94C17.55 15.31 18.76 15.51 20 15.51C20.55 15.51 21 15.96 21 16.51V20C21 20.55 20.55 21 20 21C10.61 21 3 13.39 3 4C3 3.45 3.45 3 4 3H7.5C8.05 3 8.5 3.45 8.5 4C8.5 5.25 8.7 6.45 9.07 7.57C9.18 7.92 9.1 8.31 8.82 8.59L6.62 10.79Z" fill="white"/>
+                </svg>
+            </div>
+            <span class="brand-name">TraceCall</span>
+        </div>
+        
+        <nav class="nav">
+            <a href="#" class="nav-item active">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h11a1 1 0 100-2H3zM3 11a1 1 0 100-2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/></svg>
+                Requests Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                Company Management
+            </a>
+        </nav>
+
+        <button onclick="logout()" class="btn btn-logout">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Sign Out
+        </button>
+    </aside>
+
+    <main class="main-content">
+        <header style="margin-bottom: 2.5rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--text-1);">Admin Dashboard</h1>
+            <p style="color: var(--text-2);">Management portal for free trial requests</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Registered</div>
+                <div class="stat-value" id="stat-total">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label" style="color: var(--purple)">Pending Request</div>
+                <div class="stat-value" id="stat-pending">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label" style="color: var(--green)">Active Trials</div>
+                <div class="stat-value" id="stat-active">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label" style="color: var(--pink)">On Due Accounts</div>
+                <div class="stat-value" id="stat-due">-</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 style="font-size: 1rem; font-weight: 600;">Enterprise Directory</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Admin</th>
+                        <th>Current Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="companyTable">
+                    <!-- Data injected here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="api.js"></script>
+    <script>
+        const token = localStorage.getItem('adminToken');
+        if (!token) window.location.href = 'index.html';
+
+        // Mobile Sidebar Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        function toggleMenu() {
+            const isOpen = sidebar.classList.toggle('open');
+            overlay.classList.toggle('open', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if(window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+
+        async function fetchCompanies() {
+            try {
+                const { status, data } = await api.getCompanies(token);
+                if (status === 401 || status === 403) logout();
+                
+                if (data.success) {
+                    renderStats(data.companies);
+                    renderTable(data.companies);
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
+            }
+        }
+
+        function renderStats(companies) {
+            document.getElementById('stat-total').innerText = companies.length;
+            document.getElementById('stat-pending').innerText = companies.filter(c => c.status === 'Free-Trial-Request').length;
+            document.getElementById('stat-active').innerText = companies.filter(c => c.status === 'Free-Trial').length;
+            document.getElementById('stat-due').innerText = companies.filter(c => c.status === 'On due').length;
+        }
+
+        function renderTable(companies) {
+            const tbody = document.getElementById('companyTable');
+            tbody.innerHTML = '';
+
+            companies.forEach(c => {
+                const tr = document.createElement('tr');
+                
+                let statusClass = 'status-trial';
+                if (c.status === 'Free-Trial-Request') statusClass = 'status-request';
+                if (c.status === 'On due') statusClass = 'status-due';
+
+                const dt = new Date(c.createdAt);
+                const joinedDate = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg, var(--accent), var(--purple)); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.7rem;">
+                                ${c.companyName.substring(0,2).toUpperCase()}
+                            </div>
+                            <div>
+                                <div style="font-weight:600; font-size:0.9rem;">${c.companyName}</div>
+                                <div style="font-size:0.75rem; color:var(--text-3); font-family:monospace;">${c.companyCode || '...'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-label="Admin">
+                        <div>
+                            <div style="font-weight:500; font-size:0.85rem;">${c.name}</div>
+                            <div style="color:var(--text-3); font-size:0.75rem;">${c.email}</div>
+                        </div>
+                    </td>
+                    <td data-label="Status">
+                        <span class="badge ${statusClass}">${c.status.replace(/-/g, ' ')}</span>
+                    </td>
+                    <td data-label="Joined">
+                        <span style="color:var(--text-2); font-size:0.85rem;">${joinedDate}</span>
+                    </td>
+                    <td>
+                        <div class="actions" style="display:flex; gap:8px;">
+                            ${c.status === 'Free-Trial-Request' ? `
+                                <button onclick="approveCompany('${c._id}')" class="btn btn-approve">Approve</button>
+                                <button onclick="rejectCompany('${c._id}')" class="btn btn-reject">Reject</button>
+                            ` : `<span style="color:var(--text-3); font-size:0.75rem; font-style:italic;">No pending actions</span>`}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function approveCompany(id) {
+            if (!confirm('Enable 7-day trial for this company?')) return;
+            try {
+                const data = await api.approveCompany(id, token);
+                if (data.success) fetchCompanies();
+            } catch (err) { alert('Action failed'); }
+        }
+
+        async function rejectCompany(id) {
+            if (!confirm('Reject and delete this request?')) return;
+            try {
+                const data = await api.rejectCompany(id, token);
+                if (data.success) fetchCompanies();
+            } catch (err) { alert('Action failed'); }
+        }
+
+        fetchCompanies();
+        setInterval(fetchCompanies, 30000);
+    </script>
+</body>
+</html>
