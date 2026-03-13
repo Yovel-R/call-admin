@@ -35,13 +35,17 @@
         </div>
         
         <nav class="nav">
-            <a href="#" class="nav-item active">
+            <a href="#" class="nav-item active" onclick="switchTab('requests', this)">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h11a1 1 0 100-2H3zM3 11a1 1 0 100-2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/></svg>
                 Requests Dashboard
             </a>
-            <a href="#" class="nav-item">
+            <a href="#" class="nav-item" onclick="switchTab('companies', this)">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
                 Company Management
+            </a>
+            <a href="#" class="nav-item" onclick="switchTab('rm', this)">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                Assign Relationship Manager
             </a>
         </nav>
 
@@ -76,26 +80,111 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 style="font-size: 1rem; font-weight: 600;">Enterprise Directory</h3>
+        <!-- TAB 1: Enterprise Directory -->
+        <div id="tab-requests" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600;">Enterprise Directory</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Admin</th>
+                            <th>Current Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companyTable">
+                        <!-- Data injected here -->
+                    </tbody>
+                </table>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company</th>
-                        <th>Admin</th>
-                        <th>Current Status</th>
-                        <th>Created At</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="companyTable">
-                    <!-- Data injected here -->
-                </tbody>
-            </table>
+        </div>
+
+        <!-- TAB 2: Company Management -->
+        <div id="tab-companies" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600;">Company Management</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Admin</th>
+                            <th>Industry</th>
+                            <th>Team Size</th>
+                            <th>Current Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allCompaniesTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: Assign RM -->
+        <div id="tab-rm" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="font-size: 1rem; font-weight: 600;">Assign Relationship Manager</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>RM Requested?</th>
+                            <th>Current RM</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rmTable">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
+
+    <!-- RM ASSIGNMENT MODAL -->
+    <div id="rmModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:var(--card-bg); padding:2rem; border-radius:12px; width:450px; max-width:90%; position:relative; box-shadow:var(--shadow-lg);">
+            <h3 style="margin-bottom:1rem; color:var(--text-1);">Assign Relationship Manager</h3>
+            <p style="color:var(--text-3); font-size:0.85rem; margin-bottom:1.5rem;" id="rmCompanyName"></p>
+            <input type="hidden" id="rmCompanyCode">
+            
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label style="display:block; margin-bottom:0.4rem; color:var(--text-2); font-size:0.85rem;">Name</label>
+                <input type="text" id="rmName" placeholder="John Doe" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-1);">
+            </div>
+            <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+                <div class="form-group" style="flex:1;">
+                    <label style="display:block; margin-bottom:0.4rem; color:var(--text-2); font-size:0.85rem;">Phone</label>
+                    <input type="text" id="rmPhone" placeholder="+91 9876543210" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-1);">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label style="display:block; margin-bottom:0.4rem; color:var(--text-2); font-size:0.85rem;">Email</label>
+                    <input type="email" id="rmEmail" placeholder="john@tracecall.co" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-1);">
+                </div>
+            </div>
+            <div style="display:flex; gap:1rem; margin-bottom:2rem;">
+                <div class="form-group" style="flex:1;">
+                    <label style="display:block; margin-bottom:0.4rem; color:var(--text-2); font-size:0.85rem;">Working Days</label>
+                    <input type="text" id="rmDays" value="Monday to Friday" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-1);">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label style="display:block; margin-bottom:0.4rem; color:var(--text-2); font-size:0.85rem;">Working Hours</label>
+                    <input type="text" id="rmHours" value="10:00am to 7:00pm" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text-1);">
+                </div>
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+                <button onclick="closeRmModal()" style="padding:0.75rem 1rem; border:none; background:transparent; color:var(--text-2); cursor:pointer;">Cancel</button>
+                <button onclick="submitRm()" id="assignRmBtn" style="padding:0.75rem 1.5rem; border:none; background:var(--orange); color:white; border-radius:6px; cursor:pointer;" class="btn btn-primary">Assign Manager</button>
+            </div>
+        </div>
+    </div>
 
     <script src="api.js"></script>
     <script>
@@ -132,14 +221,25 @@
             window.location.href = 'index.html';
         }
 
+        let allCompanies = [];
+        
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById('tab-' + tabId).style.display = 'block';
+        }
+
         async function fetchCompanies() {
             try {
                 const { status, data } = await api.getCompanies(token);
                 if (status === 401 || status === 403) logout();
                 
                 if (data.success) {
-                    renderStats(data.companies);
-                    renderTable(data.companies);
+                    allCompanies = data.companies;
+                    renderStats(allCompanies);
+                    renderTables();
                 }
             } catch (err) {
                 console.error('Fetch error:', err);
@@ -153,44 +253,70 @@
             document.getElementById('stat-due').innerText = companies.filter(c => c.status === 'On due').length;
         }
 
-        function renderTable(companies) {
-            const tbody = document.getElementById('companyTable');
-            tbody.innerHTML = '';
+        function renderTables() {
+            const reqTbody = document.getElementById('companyTable');
+            const allTbody = document.getElementById('allCompaniesTable');
+            const rmTbody = document.getElementById('rmTable');
 
-            companies.forEach(c => {
-                const tr = document.createElement('tr');
-                
-                let statusClass = 'status-trial';
-                if (c.status === 'Free-Trial-Request') statusClass = 'status-request';
-                if (c.status === 'On due') statusClass = 'status-due';
+            reqTbody.innerHTML = '';
+            allTbody.innerHTML = '';
+            rmTbody.innerHTML = '';
 
-                const dt = new Date(c.createdAt);
-                const joinedDate = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const requests = allCompanies.filter(c => c.status === 'Free-Trial-Request');
 
-                tr.innerHTML = `
-                    <td>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg, var(--accent), var(--purple)); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.7rem;">
-                                ${c.companyName.substring(0,2).toUpperCase()}
-                            </div>
-                            <div>
-                                <div style="font-weight:600; font-size:0.9rem;">${c.companyName}</div>
-                                <div style="font-size:0.75rem; color:var(--text-3); font-family:monospace;">${c.companyCode || '...'}</div>
-                            </div>
+            // Render Requests Table
+            requests.forEach(c => reqTbody.appendChild(buildRow(c, 'requests')));
+            if(requests.length === 0) reqTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-3);">No pending requests.</td></tr>';
+
+            // Render All Companies Table
+            allCompanies.forEach(c => allTbody.appendChild(buildRow(c, 'companies')));
+            if(allCompanies.length === 0) allTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-3);">No companies found.</td></tr>';
+
+            // Render RM Table
+            allCompanies.forEach(c => rmTbody.appendChild(buildRow(c, 'rm')));
+            if(allCompanies.length === 0) rmTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--text-3);">No companies found.</td></tr>';
+        }
+
+        function buildRow(c, tableType) {
+            const tr = document.createElement('tr');
+            
+            let statusClass = 'status-trial';
+            if (c.status === 'Free-Trial-Request') statusClass = 'status-request';
+            if (c.status === 'On due') statusClass = 'status-due';
+
+            const dt = new Date(c.createdAt);
+            const joinedDate = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            const compCol = `
+                <td>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg, var(--accent), var(--purple)); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.7rem;">
+                            ${c.companyName.substring(0,2).toUpperCase()}
                         </div>
-                    </td>
-                    <td data-label="Admin">
                         <div>
-                            <div style="font-weight:500; font-size:0.85rem;">${c.name}</div>
-                            <div style="color:var(--text-3); font-size:0.75rem;">${c.email}</div>
+                            <div style="font-weight:600; font-size:0.9rem;">${c.companyName}</div>
+                            <div style="font-size:0.75rem; color:var(--text-3); font-family:monospace;">${c.companyCode || '...'}</div>
                         </div>
-                    </td>
-                    <td data-label="Status">
-                        <span class="badge ${statusClass}">${c.status.replace(/-/g, ' ')}</span>
-                    </td>
-                    <td data-label="Joined">
-                        <span style="color:var(--text-2); font-size:0.85rem;">${joinedDate}</span>
-                    </td>
+                    </div>
+                </td>
+            `;
+            const adminCol = `
+                <td data-label="Admin">
+                    <div>
+                        <div style="font-weight:500; font-size:0.85rem;">${c.name}</div>
+                        <div style="color:var(--text-3); font-size:0.75rem;">${c.email}</div>
+                        <div style="color:var(--text-3); font-size:0.75rem;">${c.countryCode || ''} ${c.mobile}</div>
+                    </div>
+                </td>
+            `;
+            const statusCol = `<td data-label="Status"><span class="badge ${statusClass}">${c.status.replace(/-/g, ' ')}</span></td>`;
+
+            if (tableType === 'requests') {
+                tr.innerHTML = `
+                    ${compCol}
+                    ${adminCol}
+                    ${statusCol}
+                    <td data-label="Joined"><span style="color:var(--text-2); font-size:0.85rem;">${joinedDate}</span></td>
                     <td>
                         <div class="actions" style="display:flex; gap:8px;">
                             ${c.status === 'Free-Trial-Request' ? `
@@ -200,8 +326,37 @@
                         </div>
                     </td>
                 `;
-                tbody.appendChild(tr);
-            });
+            } else if (tableType === 'companies') {
+                tr.innerHTML = `
+                    ${compCol}
+                    ${adminCol}
+                    <td data-label="Industry"><span style="color:var(--text-2); font-size:0.85rem;">${c.industry || '-'}</span></td>
+                    <td data-label="Team Size"><span style="color:var(--text-2); font-size:0.85rem;">${c.teamSize || '-'}</span></td>
+                    ${statusCol}
+                `;
+            } else if (tableType === 'rm') {
+                const hasRm = c.relationshipManager && c.relationshipManager.name;
+                const requestedRm = c.rmRequestTime ? '<span style="color:var(--orange); font-size:0.8rem; font-weight:600;">Requested</span>' : '<span style="color:var(--text-3); font-size:0.8rem;">No</span>';
+                
+                tr.innerHTML = `
+                    ${compCol}
+                    <td data-label="RM Requested?">${requestedRm}</td>
+                    <td data-label="Current RM">
+                        ${hasRm ? `
+                            <div>
+                                <div style="font-weight:500; font-size:0.85rem;">${c.relationshipManager.name}</div>
+                                <div style="color:var(--text-3); font-size:0.75rem;">${c.relationshipManager.phone}</div>
+                            </div>
+                        ` : `<span style="color:var(--text-3); font-size:0.85rem; font-style:italic;">Unassigned</span>`}
+                    </td>
+                    <td>
+                        <button onclick="openRmModal('${c.companyCode}', '${c.companyName.replace(/'/g, "\\'")}')" class="btn btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem;">
+                            ${hasRm ? 'Reassign RM' : 'Assign RM'}
+                        </button>
+                    </td>
+                `;
+            }
+            return tr;
         }
 
         async function approveCompany(id) {
@@ -218,6 +373,57 @@
                 const data = await api.rejectCompany(id, token);
                 if (data.success) fetchCompanies();
             } catch (err) { alert('Action failed'); }
+        }
+
+        // RM Modal Logic
+        function openRmModal(companyCode, companyName) {
+            document.getElementById('rmCompanyCode').value = companyCode;
+            document.getElementById('rmCompanyName').innerText = `For company: ${companyName} (${companyCode})`;
+            const m = document.getElementById('rmModal');
+            m.style.display = 'flex';
+        }
+
+        function closeRmModal() {
+            document.getElementById('rmModal').style.display = 'none';
+        }
+
+        async function submitRm() {
+            const btn = document.getElementById('assignRmBtn');
+            const code = document.getElementById('rmCompanyCode').value;
+            const rmData = {
+                name: document.getElementById('rmName').value,
+                phone: document.getElementById('rmPhone').value,
+                email: document.getElementById('rmEmail').value,
+                workingDays: document.getElementById('rmDays').value,
+                workingHours: document.getElementById('rmHours').value
+            };
+
+            if(!rmData.name || !rmData.phone || !rmData.email) return alert('Name, Phone, and Email are required.');
+
+            btn.disabled = true;
+            btn.innerText = 'Assigning...';
+
+            try {
+                const data = await api.assignRm(code, rmData, token);
+                if (data.success) {
+                    alert('Successfully assigned RM');
+                    closeRmModal();
+                    
+                    // Clear form
+                    document.getElementById('rmName').value = '';
+                    document.getElementById('rmPhone').value = '';
+                    document.getElementById('rmEmail').value = '';
+                    
+                    fetchCompanies();
+                } else {
+                    alert('Failed to assign RM: ' + data.message);
+                }
+            } catch (err) {
+                alert('Error connecting to API.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Assign Manager';
+            }
         }
 
         fetchCompanies();
