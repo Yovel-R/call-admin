@@ -29,50 +29,42 @@
 
         <div id="error" class="error-message"></div>
 
-        <form id="loginForm">
+        <form id="loginForm" action="http://localhost:4000/api/admin/login-form" method="POST">
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" id="email" value="admin@softrate.com" placeholder="admin@softrate.com" required>
+                <input type="email" name="email" id="email" value="admin@softrate.com" placeholder="admin@softrate.com" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="password" value="Softrate@123" placeholder="••••••••" required>
+                <input type="password" name="password" id="password" value="Softrate@123" placeholder="••••••••" required>
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.875rem;">Login to Dashboard</button>
         </form>
     </div>
 
-    <script src="api.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Check URL for error parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
             const errorDiv = document.getElementById('error');
-            const submitBtn = e.target.querySelector('button');
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = decodeURIComponent(error);
+        }
 
+        // Show loading state on submit
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            const submitBtn = e.target.querySelector('button');
             submitBtn.innerText = 'Verifying...';
             submitBtn.disabled = true;
-            errorDiv.style.display = 'none';
-
-            try {
-                const data = await api.login(email, password);
-                if (data.success) {
-                    localStorage.setItem('adminToken', data.token);
-                    window.location.href = 'dashboard.html';
-                } else {
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerText = data.message;
-                    submitBtn.innerText = 'Login to Dashboard';
-                    submitBtn.disabled = false;
-                }
-            } catch (err) {
-                errorDiv.style.display = 'block';
-                errorDiv.innerText = 'Connection failed. Ensure backend is running.';
-                submitBtn.innerText = 'Login to Dashboard';
-                submitBtn.disabled = false;
-            }
         });
+
+        // If they already have a token in local storage, we should still allow it for backward compatibility
+        // though the form post will set a new one if they submit.
+        const token = localStorage.getItem('adminToken');
+        if (token) {
+            window.location.href = 'dashboard.html';
+        }
     </script>
 </body>
 </html>
