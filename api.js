@@ -1,6 +1,6 @@
-// const API_BASE_URL = 'https://softrate-call.onrender.com/api/admin';
+const API_BASE_URL = 'https://softrate-call.onrender.com/api/admin';
 // Uncomment below for local development
-const API_BASE_URL = 'http://localhost:4000/api/admin';
+// const API_BASE_URL = 'http://localhost:4000/api/admin';
 
 const api = {
     login: async (email, password) => {
