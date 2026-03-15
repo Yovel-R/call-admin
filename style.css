@@ -107,15 +107,16 @@ body {
 }
 
 .brand-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--purple));
-    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.brand-icon img {
+    width: 160px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 12px;
 }
 
 .brand-name {
@@ -426,7 +427,7 @@ input:focus {
         align-items: center;
         justify-content: space-between;
         padding: 0 1.25rem;
-        height: 60px;
+        height: 90px;
         background: var(--sidebar-bg);
         border-bottom: 1px solid var(--border);
         position: fixed;
