@@ -1,6 +1,6 @@
-const API_BASE_URL = 'https://softrate-call.onrender.com/api/admin';
+// const API_BASE_URL = 'https://softrate-call.onrender.com/api/admin';
 // Uncomment below for local development
-// const API_BASE_URL = 'http://localhost:4000/api/admin';
+const API_BASE_URL = 'http://localhost:4000/api/admin';
 
 const api = {
     login: async (email, password) => {
@@ -46,5 +46,13 @@ const api = {
             body: JSON.stringify(rmData)
         });
         return res.json();
+    },
+
+    getCompanyPayments: async (companyCode, token) => {
+        const res = await fetch(`${API_BASE_URL}/payments/${companyCode}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        return { status: res.status, data };
     }
 };
