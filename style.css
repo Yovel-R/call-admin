@@ -634,3 +634,17 @@ input:focus {
         padding: 1.25rem;
     }
 }
+
+/* Search Loading Spinner */
+.search-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(0, 0, 0, 0.08);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: search-spin 0.6s linear infinite;
+}
+
+@keyframes search-spin {
+    to { transform: rotate(360deg); }
+}

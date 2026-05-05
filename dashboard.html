@@ -52,9 +52,21 @@
     </aside>
 
     <main class="main-content">
-        <header style="margin-bottom: 2.5rem;">
-            <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--text-1);">Admin Dashboard</h1>
-            <p style="color: var(--text-2);">Management portal for free trial requests</p>
+        <header style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--text-1);">Admin Dashboard</h1>
+                <p style="color: var(--text-2);">Management portal for free trial requests</p>
+            </div>
+            <div class="search-box" style="position: relative; width: 100%; max-width: 320px;">
+                <svg id="adminSearchIcon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-3);" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <div id="adminSearchSpinner" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); display: none;">
+                    <div class="search-spinner"></div>
+                </div>
+                <input type="text" id="adminSearch" placeholder="Search companies, admins..." 
+                    style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 12px; border: 1px solid var(--border); background: white; font-size: 0.9rem; outline: none; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+                    onfocus="this.style.borderColor='var(--purple)'; this.style.boxShadow='0 4px 12px rgba(124, 58, 237, 0.08)'"
+                    onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)'">
+            </div>
         </header>
 
         <div class="stats-grid">
@@ -265,6 +277,24 @@
         }
 
         let allCompanies = [];
+        let searchQuery = '';
+        let adminSearchTimeout;
+
+        document.getElementById('adminSearch').addEventListener('input', (e) => {
+            const icon = document.getElementById('adminSearchIcon');
+            const spinner = document.getElementById('adminSearchSpinner');
+            
+            icon.style.display = 'none';
+            spinner.style.display = 'block';
+
+            if (adminSearchTimeout) clearTimeout(adminSearchTimeout);
+            adminSearchTimeout = setTimeout(() => {
+                icon.style.display = 'block';
+                spinner.style.display = 'none';
+                searchQuery = e.target.value.toLowerCase();
+                renderTables();
+            }, 300);
+        });
         
         function switchTab(tabId, el) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -305,19 +335,31 @@
             allTbody.innerHTML = '';
             rmTbody.innerHTML = '';
 
-            const requests = allCompanies.filter(c => c.status === 'Free-Trial-Request');
+            const filtered = allCompanies.filter(c => {
+                if (!searchQuery) return true;
+                return (
+                    c.companyName.toLowerCase().includes(searchQuery) ||
+                    (c.companyCode || '').toLowerCase().includes(searchQuery) ||
+                    (c.name || '').toLowerCase().includes(searchQuery) ||
+                    (c.email || '').toLowerCase().includes(searchQuery) ||
+                    (c.mobile || '').toLowerCase().includes(searchQuery) ||
+                    (c.status || '').toLowerCase().includes(searchQuery)
+                );
+            });
+
+            const requests = filtered.filter(c => c.status === 'Free-Trial-Request');
 
             // Render Requests Table
             requests.forEach(c => reqTbody.appendChild(buildRow(c, 'requests')));
-            if(requests.length === 0) reqTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-3);">No pending requests.</td></tr>';
+            if(requests.length === 0) reqTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-3);">${searchQuery ? 'No matching requests.' : 'No pending requests.'}</td></tr>`;
 
             // Render All Companies Table
-            allCompanies.forEach(c => allTbody.appendChild(buildRow(c, 'companies')));
-            if(allCompanies.length === 0) allTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--text-3);">No companies found.</td></tr>';
+            filtered.forEach(c => allTbody.appendChild(buildRow(c, 'companies')));
+            if(filtered.length === 0) allTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-3);">${searchQuery ? 'No matching companies.' : 'No companies found.'}</td></tr>`;
 
             // Render RM Table
-            allCompanies.forEach(c => rmTbody.appendChild(buildRow(c, 'rm')));
-            if(allCompanies.length === 0) rmTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--text-3);">No companies found.</td></tr>';
+            filtered.forEach(c => rmTbody.appendChild(buildRow(c, 'rm')));
+            if(filtered.length === 0) rmTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--text-3);">${searchQuery ? 'No matching companies.' : 'No companies found.'}</td></tr>`;
         }
 
         function buildRow(c, tableType) {
